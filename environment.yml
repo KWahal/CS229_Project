@@ -1,0 +1,27 @@
+name: "CS229_project"
+channels:
+  - pytorch
+  - defaults
+dependencies:
+  - pytorch
+  - numpy
+  - scipy
+  - tqdm
+  - docopt
+  - nltk
+  - torchvision
+  - pandas
+  - pip
+  - pip:
+    - sentencepiece
+    - sacrebleu
+    - tensorboard
+    - spacy
+    - pytextrank
+    - argparse
+    - transformers
+    - SentencePiece
+    - datasets
+    - rouge-score
+    - transformers
+    - ray
