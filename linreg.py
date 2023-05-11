@@ -4,7 +4,9 @@ from sklearn.linear_model import LinearRegression
 import clean_data as clean_data
 
 X_array, Y_array = clean_data.create_arrays()
+print(X_array)
 
+X_array = np.delete(X_array, 0, axis=1) # delete the time data
 
 # Fit the regression
 model = LinearRegression()
