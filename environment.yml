@@ -12,6 +12,7 @@ dependencies:
   - torchvision
   - pandas
   - xlrd
+  - window-slider
   - pip
   - pip:
     - sentencepiece
