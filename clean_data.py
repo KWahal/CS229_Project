@@ -38,6 +38,8 @@ def clean_main_data():
 
     # Convert categorical variables of security term to dummies
     df_all = pd.get_dummies(df_all, columns=['Security term'])
+
+    df_all = df.sort_values(by='date')
     return df_all
 
 def create_arrays():
@@ -49,8 +51,3 @@ def create_arrays():
     X_array = np.array(df_all[selected_columns].values.tolist())
     Y_array = np.array(df_all['Auction high rate %'].values.tolist()).T
     return X_array, Y_array
-
-X, Y = create_arrays()
-
-print(X)
-print(Y)
