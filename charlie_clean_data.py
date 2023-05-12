@@ -55,33 +55,4 @@ def clean_main_data():
 
     return df_all
 
-def get_auction_type_df(df):
-    df_all = clean_main_data()
-    if (df == 'df_all'):
-        return df_all
-    if (df == 'four_week'):
-        return df_all[df_all['Security term_4 WK'] == 1]
-    if (df == 'thirteen_week'):
-        return df_all[df_all['Security term_13 WK'] == 1]
-    if (df == 'seventeen_week'):
-        return df_all[df_all['Security term_17 WK'] == 1]
-    if (df == 'twenty_six_week'):
-        return df_all[df_all['Security term_26 WK'] == 1]
-    if (df == 'fifty_two_week'):
-        return df_all[df_all['Security term_52 WK'] == 1]
-    if (df == 'cmb'):
-        return df_all[df_all['Security term_CMB'] == 1]
-
-def create_arrays(df):
-    df = get_auction_type_df(df)
-    # Create variables to predict based on
-    selected_columns = ['date', 'Total issue', '(SOMA) Federal Reserve banks', 'Depository institutions', 'Individuals', 'Dealers and brokers',
-                        'Pension and Retirement funds and Ins. Co.', 'Investment funds', 'Foreign and international', 'Other and Noncomps', 
-                        'Security term_13 WK', 'Security term_26 WK', 'Security term_4 WK', 'Security term_17 WK', 'Security term_52 WK', 'Security term_CMB', 'News Sentiment']
-    X_array = np.array(df[selected_columns].values.tolist())
-    Y_array = np.array(df['Auction high rate %'].values.tolist()).T
-    print(X_array)
-    print(Y_array)
-    return X_array, Y_array
-
-create_arrays('four_week')
+print(clean_main_data().columns)

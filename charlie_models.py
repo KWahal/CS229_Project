@@ -4,6 +4,16 @@ from sklearn.linear_model import LinearRegression
 import statsmodels.api as sm
 import charlie_utils as utils
 
+# To run a model on a specified auction type, pick from the following as the parameter for df:
+# 'df_all'
+# 'four_week'
+# 'eight_week'
+# 'thirteen_week'
+# 'seventeen_week'
+# 'twenty_six_week'
+# 'fifty_two_week'
+# 'cmb'
+
 def get_linear_regression_model(df):
     x_train, y_train, x_test, y_test = utils.split_train_test(df, 0.7)
     x_train = np.delete(x_train, 0, axis=1) # delete the time data
