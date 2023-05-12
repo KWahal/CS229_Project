@@ -11,8 +11,7 @@ def clean_main_data():
     # read sentiment dataset
     df_news_sentiment = pd.read_excel('econ_news_sentiment.xlsx', 'Data')
     # read effective federal funds rate dataset
-    df_effr = pd.read_excel('effectiveffr.xlsx')
-    print(df_effr)
+    df_effr = pd.read_csv('effectiveffr.csv')
 
     # define the columns
     df_09.columns = df_09.iloc[2]
@@ -52,7 +51,7 @@ def clean_main_data():
 
     #print(df_effr)
     df_all = pd.merge(df_all, df_news_sentiment, on='date', how='inner')
-    df_all = pd.merge(df_all, df_effr[['date', 'Rate (%)']], on='date', how='inner')
+    #df_all = pd.merge(df_all, df_effr[['date', 'Rate (%)']], on='date', how='inner')
 
     print(df_all)
     return df_all
