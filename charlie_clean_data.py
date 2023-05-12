@@ -59,7 +59,7 @@ def clean_main_data():
 def create_arrays():
     df_all = clean_main_data()
     # Create variables to predict based on
-    selected_columns = ['Issue date', 'Total issue', '(SOMA) Federal Reserve banks', 'Depository institutions', 'Individuals', 'Dealers and brokers',
+    selected_columns = ['date', 'Total issue', '(SOMA) Federal Reserve banks', 'Depository institutions', 'Individuals', 'Dealers and brokers',
                         'Pension and Retirement funds and Ins. Co.', 'Investment funds', 'Foreign and international', 'Other and Noncomps', 
                         'Security term_13 WK', 'Security term_26 WK', 'Security term_4 WK', 'Security term_52 WK', 'Security term_CMB', 'News Sentiment']
     X_array = np.array(df_all[selected_columns].values.tolist())
