@@ -24,11 +24,18 @@ def create_data():
     final_array = np.concatenate((weeks_array, final_array), axis=1)
     final_array = final_array[final_array[:, 0].argsort()]
     
-    print(final_array)
     return final_array
 
 def create_windows():
-    trainset = create_data()
-    w = 5
+    trainset = create_data().T
+    bucket_size = 5
+    overlap_count = 1
+    slider = Slider(bucket_size,overlap_count)
+    slider.fit(trainset)       
+    while True:
+        window_data = slider.slide()
+        # do your stuff
+        print(window_data)
+        if slider.reached_end_of_list(): break
 
 create_windows()
