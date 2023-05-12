@@ -4,10 +4,15 @@ from sklearn.linear_model import LinearRegression
 
 
 def clean_main_data():
-    # read the 01-09 deataset
+    # read the 01-09 dataset
     df_09 = pd.read_excel('Aug2001-Sep2009.xls')
     # read the 09-2023 dataset
     df_23 = pd.read_excel('Oct2009-May8,2023.xls')
+    # read sentiment dataset
+    df_news_sentiment = pd.read_excel('econ_news_sentiment.xlsx', 'Data')
+    # read effective federal funds rate dataset
+    df_effr = pd.read_excel('effectiveffr.xlsx')
+    print(df_effr)
 
     # define the columns
     df_09.columns = df_09.iloc[2]
@@ -18,7 +23,6 @@ def clean_main_data():
 
     # concatenate the datasets
     df_all = pd.concat([df_09, df_23], ignore_index=True)
-
 
     # clean the data, dropping the relevant variables/rows and standardizing between datasets, incl. with regexes
     df_all = df_all.drop([0])
@@ -32,12 +36,25 @@ def clean_main_data():
     df_all['Security term'] = df_all['Security term'].str.replace('8-Week Bill', '8 WK')
     df_all['Security term'] = df_all['Security term'].str.replace('17-Week Bill', '17 WK')
     df_all['Security term'] = df_all['Security term'].str.replace('CASH', 'CMB')
-
     df_all['Security term'] = df_all['Security term'].str.replace('.*CMB*.', 'CMB', regex=True)
     df_all = df_all.drop(index=df_all[df_all['Security term'].isin(['Security term'])].index)
 
     # Convert categorical variables of security term to dummies
     df_all = pd.get_dummies(df_all, columns=['Security term'])
+
+    # merge the dataframes on the date column
+    df_all = df_all.rename({'Issue date': 'date'}, axis=1)
+    df_all['date'] = pd.to_datetime(df_all['date'])
+
+    df_effr = df_effr.rename({'Effective Date': 'date'}, axis=1)
+    df_effr = df_effr.dropna()
+    df_effr['date'] = pd.to_datetime(df_all['date'])
+
+    #print(df_effr)
+    df_all = pd.merge(df_all, df_news_sentiment, on='date', how='inner')
+    df_all = pd.merge(df_all, df_effr[['date', 'Rate (%)']], on='date', how='inner')
+
+    print(df_all)
     return df_all
 
 def create_arrays():
@@ -45,12 +62,9 @@ def create_arrays():
     # Create variables to predict based on
     selected_columns = ['Issue date', 'Total issue', '(SOMA) Federal Reserve banks', 'Depository institutions', 'Individuals', 'Dealers and brokers',
                         'Pension and Retirement funds and Ins. Co.', 'Investment funds', 'Foreign and international', 'Other and Noncomps', 
-                        'Security term_13 WK', 'Security term_26 WK', 'Security term_4 WK', 'Security term_52 WK', 'Security term_CMB']
+                        'Security term_13 WK', 'Security term_26 WK', 'Security term_4 WK', 'Security term_52 WK', 'Security term_CMB', 'News Sentiment']
     X_array = np.array(df_all[selected_columns].values.tolist())
     Y_array = np.array(df_all['Auction high rate %'].values.tolist()).T
     return X_array, Y_array
 
-X, Y = create_arrays()
-
-print(X)
-print(Y)
+clean_main_data()
