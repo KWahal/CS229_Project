@@ -91,7 +91,7 @@ def get_arima_model(df):
     model = sm.tsa.ARIMA(train, order=(1, 1, 1)).fit()
 
     print(model.summary())
-"""
+
     test['date'] = pd.to_datetime(test['date'])
     #test = test.set_index('date')
 
@@ -121,7 +121,7 @@ def get_arima_model(df):
    # print(train)
     model.predict(test)
 
-    print(model(summary))"""
+    print(model(summary))
 
 # get_polynomial_regression_model('df_all')
 #get_linear_regression_model('df_all')
