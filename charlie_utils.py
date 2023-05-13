@@ -40,6 +40,10 @@ def split_train_test(df, split_size, split_xy=True):
     x_train, y_train = create_arrays(train_ts)
     x_test, y_test = create_arrays(test_ts)
 
+    print("x train is ")
+    print(x_train)
+    print("y train is ")
+    print(y_train)
     if (split_xy):
         return x_train, y_train, x_test, y_test
     return train_ts, test_ts

@@ -39,7 +39,7 @@ def clean_main_data():
     # Convert categorical variables of security term to dummies
     df_all = pd.get_dummies(df_all, columns=['Security term'])
 
-    df_all = df.sort_values(by='date')
+    df_all = df_all.sort_values(by='Issue date')
     return df_all
 
 def create_arrays():

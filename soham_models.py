@@ -4,6 +4,10 @@ from sklearn.linear_model import LinearRegression
 import statsmodels.api as sm
 import soham_utils as utils
 import clean_data as clean
+from sklearn.metrics import mean_squared_error
+from sklearn.pipeline import make_pipeline
+from sklearn.linear_model import LinearRegression
+from sklearn.preprocessing import PolynomialFeatures, StandardScaler
 
 # To run a model on a specified auction type, pick from the following as the parameter for df:
 # 'df_all'
@@ -16,21 +20,49 @@ import clean_data as clean
 # 'cmb'
 
 def get_linear_regression_model(df):
-    x_train, y_train, x_test, y_test = utils.split_train_test(df, 0.7)
+    x_train, y_train, x_test, y_test = utils.split_train_test(df, 0.8)
     x_train = np.delete(x_train, 0, axis=1) # delete the time data
     x_test = np.delete(x_test, 0, axis=1)
 
     # Fit the regression
     model = LinearRegression()
     model.fit(x_train, y_train)
-    model.predict(x_test)
+
+    y_pred = model.predict(x_test)
     r_sq = model.score(x_test, y_test)
+    
+    MSE = mean_squared_error(y_test, y_pred)
+
+    print(f"MSE: {MSE}")
     print(f"coefficient of determination: {r_sq}")
     print(f"intercept: {model.intercept_}")
     print(f"slope: {model.coef_}")
 
+def get_polynomial_regression_model(df):
+    x_train, y_train, x_test, y_test = utils.split_train_test(df, 0.8)
+    x_train = np.delete(x_train, 0, axis=1) # delete the time data
+    x_test = np.delete(x_test, 0, axis=1)
+
+    degree=3
+    polyreg_scaled = make_pipeline(PolynomialFeatures(degree), StandardScaler(), LinearRegression())
+    polyreg_scaled.fit(x_train, y_train)
+
+    y_pred = polyreg_scaled.predict(x_test)
+    r_sq = polyreg_scaled.score(x_test, y_test)
+    
+    MSE = mean_squared_error(y_test, y_pred)
+
+    print(f"MSE: {MSE}")
+    print(f"coefficient of determination: {r_sq}")
+   # print(f"intercept: {polyreg_scaled.intercept_}")
+   # print(f"slope: {polyreg_scaled.coef_}")
+
+    #polyreg=make_pipeline(PolynomialFeatures(degree),LinearRegression())
+    #polyreg.fit(x_train,y_train)
+    
+
 def get_arima_model(df):
-    train, test = utils.split_train_test(df, 0.7, split_xy=False)
+    train, test = utils.split_train_test(df, 0.8, split_xy=False)
 
     train['date'] = pd.to_datetime(train['date'])
     train = train.set_index('date')
@@ -58,6 +90,8 @@ def get_arima_model(df):
 
     model = sm.tsa.ARIMA(train, order=(1, 1, 1)).fit()
 
+    print(model.summary())
+"""
     test['date'] = pd.to_datetime(test['date'])
     #test = test.set_index('date')
 
@@ -87,6 +121,8 @@ def get_arima_model(df):
    # print(train)
     model.predict(test)
 
-    print(model(summary))
+    print(model(summary))"""
 
+# get_polynomial_regression_model('df_all')
+#get_linear_regression_model('df_all')
 get_arima_model('four_week')
