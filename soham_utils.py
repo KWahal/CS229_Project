@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 import charlie_clean_data as clean_data
+import matplotlib.pyplot as plt
 import math
 
 def get_auction_type_df(df):
@@ -48,6 +49,25 @@ def split_train_test(df, split_size, split_xy=True):
         return x_train, y_train, x_test, y_test
     return train_ts, test_ts
 
+def plot_data():
+    split = False
+    if split:
+        bond_types = ['four_week', 'eight_week', 'thirteen_week', 'seventeen_week', 'twenty_six_week', 'fifty_two_week', 'cmb']
+        for type in bond_types:
+            df = get_auction_type_df(type)
+            df['date'] = pd.to_datetime(df['date'])
+            df.set_index('date', inplace=True)
+            plt.plot(df.index, df['Auction high rate %'], label=type)
+        plt.legend(loc="upper left")
+    else:
+        df = get_auction_type_df('df_all')
+        df['date'] = pd.to_datetime(df['date'])
+        df.set_index('date', inplace=True)
+        plt.plot(df.index, df['Auction high rate %'])
+    plt.xlabel('Date')
+    plt.ylabel('Auction high rate %')
+    plt.show()
+
 def create_data(df):
     X_array, Y_array = clean_data.create_arrays(df)
     final_array = np.column_stack((X_array, Y_array))
@@ -69,4 +89,5 @@ def create_data(df):
     print(final_array)
     return final_array
 
-split_train_test('four_week', 0.7, split_xy=False)
+plot_data()
+# split_train_test('four_week', 0.7, split_xy=False)
