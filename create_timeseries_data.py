@@ -1,12 +1,12 @@
 import pandas as pd
 import numpy as np
 from sklearn.linear_model import LinearRegression
-import charlie_clean_data as clean_data
+import clean_data_final as clean_data_final
 import math
 from window_slider import Slider
 
 def create_data():
-    X_array, Y_array = clean_data.create_arrays()
+    X_array, Y_array = clean_data_final.create_arrays()
     final_array =  np.column_stack((X_array, Y_array))
 
     dates = final_array[:, 0]

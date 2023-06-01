@@ -89,5 +89,5 @@ def create_data(df):
     print(final_array)
     return final_array
 
-#plot_data()
+plot_data()
 # split_train_test('four_week', 0.7, split_xy=False)

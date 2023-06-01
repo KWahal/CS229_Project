@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 from sklearn.linear_model import LinearRegression
-import clean_data as clean_data
+import OLD.clean_data as clean_data
 
 X_array, Y_array = clean_data.create_arrays()
 print(X_array)
