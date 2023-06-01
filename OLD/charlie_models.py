@@ -34,11 +34,11 @@ def get_arima_model(df):
     train['date'] = pd.to_datetime(train['date'])
     train = train.set_index('date')
 
-    model = sm.tsa.ARIMA(train, order=(1, 1, 1)).fit()
+    model = sm.tsa.ARIMA(train, order=(1, 0, 0)).fit()
 
     model.predict(test)
 
     print(model(summary))
 
-#get_arima_model('four_week')
+get_arima_model('four_week')
 print(utils.get_auction_type_df('four_week'))

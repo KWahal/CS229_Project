@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-import charlie_clean_data as clean_data
+import clean_data as clean_data
 import matplotlib.pyplot as plt
 import math
 
