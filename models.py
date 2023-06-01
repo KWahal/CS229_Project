@@ -2,8 +2,8 @@ import pandas as pd
 import numpy as np
 from sklearn.linear_model import LinearRegression
 import statsmodels.api as sm
-import soham_utils as utils
-import clean_data as clean
+import utils as utils
+import OLD.clean_data as clean
 from sklearn.metrics import mean_squared_error
 from sklearn.pipeline import make_pipeline
 from sklearn.linear_model import LinearRegression
