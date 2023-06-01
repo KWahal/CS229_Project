@@ -1,0 +1,36 @@
+WARNING:py.warnings:/Users/karsenwahal/miniconda3/envs/CS229/lib/python3.9/site-packages/scalecast/Forecaster.py:199: FutureWarning: The default dtype for empty Series will be 'object' instead of 'float64' in a future version. Specify a dtype explicitly to silence this warning.
+  self.future_dates = pd.Series([])
+
+WARNING:py.warnings:/Users/karsenwahal/miniconda3/envs/CS229/lib/python3.9/site-packages/scalecast/Forecaster.py:199: FutureWarning: The default dtype for empty Series will be 'object' instead of 'float64' in a future version. Specify a dtype explicitly to silence this warning.
+  self.future_dates = pd.Series([])
+
+WARNING:py.warnings:/Users/karsenwahal/miniconda3/envs/CS229/lib/python3.9/site-packages/scalecast/Forecaster.py:199: FutureWarning: The default dtype for empty Series will be 'object' instead of 'float64' in a future version. Specify a dtype explicitly to silence this warning.
+  self.future_dates = pd.Series([])
+
+WARNING:py.warnings:/Users/karsenwahal/miniconda3/envs/CS229/lib/python3.9/site-packages/scalecast/Forecaster.py:199: FutureWarning: The default dtype for empty Series will be 'object' instead of 'float64' in a future version. Specify a dtype explicitly to silence this warning.
+  self.future_dates = pd.Series([])
+
+WARNING:py.warnings:/Users/karsenwahal/miniconda3/envs/CS229/lib/python3.9/site-packages/scalecast/Forecaster.py:199: FutureWarning: The default dtype for empty Series will be 'object' instead of 'float64' in a future version. Specify a dtype explicitly to silence this warning.
+  self.future_dates = pd.Series([])
+
+WARNING:py.warnings:/Users/karsenwahal/miniconda3/envs/CS229/lib/python3.9/site-packages/scalecast/Forecaster.py:199: FutureWarning: The default dtype for empty Series will be 'object' instead of 'float64' in a future version. Specify a dtype explicitly to silence this warning.
+  self.future_dates = pd.Series([])
+
+WARNING:py.warnings:/Users/karsenwahal/miniconda3/envs/CS229/lib/python3.9/site-packages/scalecast/Forecaster.py:199: FutureWarning: The default dtype for empty Series will be 'object' instead of 'float64' in a future version. Specify a dtype explicitly to silence this warning.
+  self.future_dates = pd.Series([])
+
+WARNING:py.warnings:/Users/karsenwahal/miniconda3/envs/CS229/lib/python3.9/site-packages/scalecast/Forecaster.py:199: FutureWarning: The default dtype for empty Series will be 'object' instead of 'float64' in a future version. Specify a dtype explicitly to silence this warning.
+  self.future_dates = pd.Series([])
+
+WARNING:py.warnings:/Users/karsenwahal/miniconda3/envs/CS229/lib/python3.9/site-packages/scalecast/Forecaster.py:199: FutureWarning: The default dtype for empty Series will be 'object' instead of 'float64' in a future version. Specify a dtype explicitly to silence this warning.
+  self.future_dates = pd.Series([])
+
+WARNING:py.warnings:/Users/karsenwahal/miniconda3/envs/CS229/lib/python3.9/site-packages/scalecast/Forecaster.py:199: FutureWarning: The default dtype for empty Series will be 'object' instead of 'float64' in a future version. Specify a dtype explicitly to silence this warning.
+  self.future_dates = pd.Series([])
+
+WARNING:py.warnings:/Users/karsenwahal/miniconda3/envs/CS229/lib/python3.9/site-packages/scalecast/Forecaster.py:199: FutureWarning: The default dtype for empty Series will be 'object' instead of 'float64' in a future version. Specify a dtype explicitly to silence this warning.
+  self.future_dates = pd.Series([])
+
+WARNING:py.warnings:/Users/karsenwahal/miniconda3/envs/CS229/lib/python3.9/site-packages/scalecast/Forecaster.py:199: FutureWarning: The default dtype for empty Series will be 'object' instead of 'float64' in a future version. Specify a dtype explicitly to silence this warning.
+  self.future_dates = pd.Series([])
+

@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-import charlie_clean_data as clean_data
+import clean_data_final as clean_data
 import matplotlib.pyplot as plt
 import math
 
@@ -89,5 +89,5 @@ def create_data(df):
     print(final_array)
     return final_array
 
-plot_data()
+# plot_data()
 # split_train_test('four_week', 0.7, split_xy=False)

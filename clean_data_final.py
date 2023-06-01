@@ -56,3 +56,4 @@ def clean_main_data():
     return df_all
 
 print(clean_main_data().columns)
+clean_main_data().to_excel('cleaned_data.xlsx', index=False)
