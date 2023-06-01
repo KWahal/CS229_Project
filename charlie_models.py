@@ -40,4 +40,5 @@ def get_arima_model(df):
 
     print(model(summary))
 
-get_arima_model('four_week')
+#get_arima_model('four_week')
+print(utils.get_auction_type_df('four_week'))

@@ -77,5 +77,3 @@ def create_data(df):
     
     print(final_array)
     return final_array
-
-plot_data('four week')
