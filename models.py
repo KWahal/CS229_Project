@@ -1,13 +1,15 @@
 import pandas as pd
 import numpy as np
 from sklearn.linear_model import LinearRegression
-import statsmodels.api as sm
+from statsmodels.tsa.arima.model import ARIMA
 import utils as utils
-import OLD.clean_data as clean
+import clean_data_final as clean_data
 from sklearn.metrics import mean_squared_error
 from sklearn.pipeline import make_pipeline
 from sklearn.linear_model import LinearRegression
 from sklearn.preprocessing import PolynomialFeatures, StandardScaler
+import matplotlib.pyplot as plt
+from pmdarima.arima import auto_arima
 
 # To run a model on a specified auction type, pick from the following as the parameter for df:
 # 'df_all'
@@ -88,7 +90,7 @@ def get_arima_model(df):
     train = train.drop('News Sentiment', axis=1)
    # print(train)
 
-    model = sm.tsa.ARIMA(train, order=(1, 1, 1)).fit()
+    model = ARIMA(train, order=(1, 1, 1)).fit()
 
     print(model.summary())
 
@@ -117,12 +119,72 @@ def get_arima_model(df):
     print(test)
     test = test['date']
    # print(test['date'])
-    #print(test)
+    # print(test)
    # print(train)
-    model.predict(test)
+    # model.predict(test)
 
     print(model(summary))
 
-# get_polynomial_regression_model('df_all')
-#get_linear_regression_model('df_all')
-get_arima_model('four_week')
+def get_arima_model_char(df, p, d, q):
+    # Prepare train and test data
+    train, test = utils.split_train_test(df, 0.7, split_xy=False)
+   # print(train.reset_index().drop(['index'], axis=1))
+    #print(test.reset_index().drop(['index'], axis=1))
+
+    # Fit ARIMA model on training data
+    exog_train = train.drop(['Auction high rate %', 'Maturity date'], axis=1)
+   
+    model = auto_arima(train['Auction high rate %'].astype('float64'), exogenous=exog_train.apply(pd.to_numeric), seasonal=False)
+    model.fit(train['Auction high rate %'].astype('float64'), exogenous=exog_train.apply(pd.to_numeric))
+
+    # Predict on test data
+    exog_test = test.drop(['Auction high rate %', 'Maturity date'], axis=1).apply(pd.to_numeric)
+    predictions = model.predict(n_periods=len(test), exogenous=exog_test)
+    print(predictions)
+    
+    predictions = predictions.reset_index().drop(['index'], axis=1).iloc[:, 0]
+    y_test = test['Auction high rate %'].astype('float64').squeeze().reset_index().drop(['index'], axis=1)['Auction high rate %']
+
+    # Evaluate model performance
+    mse = ((predictions - y_test) ** 2).mean()
+    rmse = mse ** 0.5
+
+    # Create a figure and axis
+    fig, ax = plt.subplots()
+
+    # Plot the first series
+    ax.plot(predictions, label='predictions')
+
+    # Plot the second series
+    ax.plot(y_test, label='test')
+
+    # Set labels and title
+    ax.set_xlabel('X-axis')
+    ax.set_ylabel('Y-axis')
+    ax.set_title('Line Plot of Two Series')
+
+    # Display a legend
+    ax.legend()
+
+    # Show the plot
+    plt.show()  
+
+def evaluate_models(p, d, q):
+    rmse = 1000000
+
+    for i in range(p):
+        for j in range(d):
+            for k in range(q):
+                temp = get_arima_model_char('four week', p, d, q)
+                if temp < rmse:
+                    rmse = temp
+                    best_p = i
+                    best_d = j
+                    best_q = k
+    
+    print(rmse)
+    print(best_p)
+    print(best_d)
+    print(best_q)
+
+get_arima_model_char('four_week', 0, 1, 1)
