@@ -15,7 +15,7 @@ from scalecast.Forecaster import Forecaster
 
 
 TEST_LENGTH = 120 # original: 120
-FUTURE_DATES = 120 # original: 120
+FUTURE_DATES = 1200 # original: 120
 EPOCHS = 15 # original: 15
 LAYERS = 6 # original: 3
 
@@ -40,9 +40,10 @@ def get_LSTM_model(df):
     print("stat is " + str(stat))
     print("pval is " + str(pval))
 
-    f.set_test_length(TEST_LENGTH)       # 1. 12 observations to test the results
-    f.generate_future_dates(FUTURE_DATES) # 2. 12 future points to forecast
+    f.set_test_length(TEST_LENGTH)       # 1. TEST_LENGTH observations to test the results
+    f.generate_future_dates(FUTURE_DATES) # 2. FUTURE_DATES future points to forecast
     f.set_estimator('lstm')
+    f.save_summary_stats()
     f.manual_forecast(
     lags=36,
     batch_size=32,
@@ -54,6 +55,9 @@ def get_LSTM_model(df):
     lstm_layer_sizes=(100,)*LAYERS,
     dropout=(0,)*LAYERS,
     )
+    ss = f.export_summary_stats('lstm')
+    print(ss)
+    print(ss.values)
     f.plot_test_set()
     plt.savefig('images/lstm.png')
     f.plot_test_set()
