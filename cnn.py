@@ -61,6 +61,7 @@ from sklearn.preprocessing import MinMaxScaler
 from sklearn.metrics import mean_squared_error
 import utils as utils
 import clean_data_final as clean
+from matplotlib import pyplot
 
 
 def clean_data(X_train, y_train, X_test, y_test):
@@ -218,36 +219,90 @@ def cnn(df):
     X_test[:, 0] = time_diff2
 
 
-    for array in [X_train, y_train, X_test, y_test]:
-        array = array.astype('float32')
+   # for array in [X_train, y_train, X_test, y_test]:
+       # array = array.astype('float32')
        # array = array.tolist()
        # array = np.asarray(array).astype(np.float32)
         #all_columns = array[:, :]
        # for col in all_columns:
        #    array=array[col].values.astype(np.float32)
        # y=train['target(price_in_lacs)'].values.astype(np.float32)
-        print(array.dtype)
+        #print(array.dtype)
       #  array = tf.convert_to_tensor(array, dtype=tf.float32)
     # Define the input shape
+    X_train = X_train.astype('float32')
+    X_test = X_test.astype('float32')
+    y_test = y_test.astype('float32')
+    y_train = y_train.astype('float32')
+    X_train = np.reshape(X_train, (X_train.shape[0], X_train.shape[1], 1))
+   # X_test = np.reshape(X_test, (X_test.shape[0], X_test.shape[1], 1))
+   # X_train = np.reshape(X_train, (1, X_train.shape[0], X_train.shape[1]))
+
+    # Reshape X_train
+  #  X_train = np.reshape(X_train, (X_train.shape[0], X_train.shape[1], X_train.shape[2]))
+
+# Reshape y_train
+  #  y_train = np.reshape(y_train, (y_train.shape[0], 1))
+
+    print(X_train.shape)
+    print(y_train.shape)
+
 
     input_shape = (X_train.shape[0], X_train.shape[1])  # (num_time_steps, num_features)
 
+    """
     # Create the model
     model = Sequential()
-    model.add(Conv1D(filters=64, kernel_size=3, activation='relu', input_shape=input_shape))
+    model.add(Conv1D(filters=64, kernel_size=3, activation='relu', input_shape=input_shape, padding='same'))
     model.add(MaxPooling1D(pool_size=2))
     model.add(Conv1D(filters=64, kernel_size=3, activation='relu'))
     model.add(MaxPooling1D(pool_size=2))
     model.add(Flatten())
     model.add(Dense(64, activation='relu'))
     model.add(Dense(1))  # Adjust the output layer according to your task
+  #  model.add(tf.keras.layers.Dense(256, input_shape=(X_train.shape[1],), activation='sigmoid'))
 
     # Compile the model
+    model.compile(optimizer='adam', loss='mse')"""
+    model = Sequential()
+    model.add(Conv1D(filters=128, kernel_size=2, activation='relu', input_shape=(11, 1)))
+    model.add(Conv1D(filters=128, kernel_size=2, activation='relu'))
+    model.add(Conv1D(filters=128, kernel_size=2, activation='relu'))
+    model.add(MaxPooling1D(pool_size=2))
+    model.add(Flatten())
+    model.add(Dense(100, activation='relu'))
+    model.add(Dense(1))
     model.compile(optimizer='adam', loss='mse')
+    # fit model
+    model.fit(X_train, y_train, epochs=200)
 
     # Train the model
-    print(X_train)
-    model.fit(X_train, y_train, epochs=10, batch_size=32, validation_data=(X_test, y_test))
+   # print(X_train)
+    print(model.summary())
+    preds = model.predict(X_test)
+   # scaler = MinMaxScaler(feature_range=(-1,1))
+  #  preds = scaler.inverse_transform(preds)
+
+
+    #Ytest=np.asanyarray(y_test)  
+    Ytest=y_test.reshape(-1,1) 
+    
+   # Ytest = scaler.inverse_transform(Ytest)
+
+
+   # Ytrain=np.asanyarray(Ytrain)  
+    Ytrain=y_train.reshape(-1,1) 
+   # Ytrain = scaler.inverse_transform(Ytrain)
+
+    mse = mean_squared_error(y_test,preds)
+    print("mse is " + str(mse))
+
+    pyplot.figure(figsize=(20,10))
+    pyplot.plot(Ytest)
+    pyplot.plot(preds, 'r')
+    pyplot.show()
+   # model.fit(X_train, y_train, epochs=10)
+   # model.fit(X_train, y_train, epochs=10, batch_size=32, validation_data=(X_test, y_test))
 
 
 
