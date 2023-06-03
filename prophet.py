@@ -1,7 +1,8 @@
 import utils as utils
-from neuralprophet import NeuralProphet
+from neuralprophet import NeuralProphet, set_log_level
 import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
 
 def prophet(df):
     #resampled_data = utils.resample_data(df)
@@ -11,7 +12,7 @@ def prophet(df):
 
     X_train, y_train, X_test, y_test = get_split(df_resampled, 0.8, split_xy=True)
 
-    X_train = utils.resample_data(X_train)
+  #  X_train = utils.resample_data(X_train)
     print(X_train)
 
     X_train = X_train[:, 0]
@@ -22,10 +23,29 @@ def prophet(df):
     data = data.rename(columns={0: "ds", 1: "y"})
     print(data)
 
-    m = NeuralProphet(n_forecasts = 60, n_lags=60, n_changepoints=50, yearly_seasonality=False, weekly_seasonality=False, 
-                      daily_seasonality=False, batch_size=64, epochs=50, learning_rate=1.0)
+    # plot
+    x = data.iloc[:, 0]  # Selecting the first column as x-axis values
+    y = data.iloc[:, 1]  # Selecting the second column as y-axis values
+
+    plt.plot(x, y)
+    plt.xlabel('X-axis')
+    plt.ylabel('Y-axis')
+    plt.title('Line Plot')
+    plt.show()
+
+    # Create a NeuralProphet model with default parameters
+    m = NeuralProphet()
+    # Use static plotly in notebooks
+   # m.set_plotting_backend("plotly-static")
+    set_log_level("ERROR")
+
+    # Fit the model on the dataset (this might take a bit)
+    metrics = m.fit(data)
+
+    #m = NeuralProphet(n_forecasts = 60, n_lags=60, n_changepoints=50, yearly_seasonality=False, weekly_seasonality=False, 
+                    #  daily_seasonality=False, batch_size=64, epochs=50, learning_rate=1.0)
     
-    metrics = m.fit(data, freq="D")
+   # metrics = m.fit(data, freq="D")
 
 def get_split(df, split_size, split_xy=True):
     ts = df
