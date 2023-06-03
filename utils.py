@@ -8,6 +8,7 @@ def resample_data(df):
     df['date'] = pd.to_datetime(df['date'])
     df = df.set_index('date')
     df_resampled = df.resample('D').pad()
+    df_resampled = df_resampled.reset_index()
     return df_resampled
 
 def get_auction_type_df(df):
