@@ -5,8 +5,11 @@ import pandas as pd
 
 def prophet(df):
     #resampled_data = utils.resample_data(df)
+    df = utils.get_auction_type_df(df)
+    df_resampled = utils.resample_data(df)
 
-    X_train, y_train, X_test, y_test = utils.split_train_test(df, 0.8)
+
+    X_train, y_train, X_test, y_test = get_split(df_resampled, 0.8, split_xy=True)
 
     X_train = utils.resample_data(X_train)
     print(X_train)
