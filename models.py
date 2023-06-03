@@ -65,10 +65,11 @@ def get_polynomial_regression_model(df):
     #polyreg.fit(x_train,y_train)
 
 def get_arima_model_cv(df):
-    data = utils.resample_data(df).reset_index()
+    data = utils.get_auction_type_df(df)
+    data = utils.resample_data(data)
     print(data)
 
-    tscv = TimeSeriesSplit(n_splits=5)
+    tscv = TimeSeriesSplit(n_splits=10)
 
     mse_scores = []
 
@@ -181,4 +182,4 @@ def evaluate_models(p, d, q):
     print(best_d)
     print(best_q)
 
-get_arima_model_cv('cmb')
+get_arima_model_cv('eight_week')

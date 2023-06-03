@@ -42,8 +42,8 @@ def create_arrays(df):
     return X_array, Y_array
 
 def split_train_test(df, split_size, split_xy=True):
-    ts = get_auction_type_df(df)
-
+    ts = df
+    
     # Split into a training set and a testing set
     train_size = int(len(ts) * split_size)
     train_ts, test_ts = ts[:train_size], ts[train_size:]
