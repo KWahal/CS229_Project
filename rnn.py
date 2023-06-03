@@ -3,6 +3,7 @@ import pandas as pd
 import utils as utils
 
 def get_rnn(df):
+    df = utils.get_auction_type_df(df)
     df_resampled = utils.resample_data(df)
     print(df_resampled)
 

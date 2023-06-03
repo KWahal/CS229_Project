@@ -63,72 +63,11 @@ def get_polynomial_regression_model(df):
 
     #polyreg=make_pipeline(PolynomialFeatures(degree),LinearRegression())
     #polyreg.fit(x_train,y_train)
-    
-
-def get_arima_model(df):
-    train, test = utils.split_train_test(df, 0.8, split_xy=False)
-
-    train['date'] = pd.to_datetime(train['date'])
-    train = train.set_index('date')
-
-    train = train.drop('Maturity date', axis=1)
-   # print(train)
-   # print(train.dtypes)
-
-    for col in train.columns:
-        train[col] = train[col].astype('float64')
-       # if col != 'Auction high rate %':
-            #train = train.drop('Auction high rate %', axis=1)
-
-    train = train.drop('Total issue', axis = 1)
-    train = train.drop('(SOMA) Federal Reserve banks', axis=1)
-    train = train.drop('Depository institutions', axis=1)
-    train = train.drop('Individuals', axis = 1)
-    train = train.drop('Dealers and brokers', axis=1)
-    train = train.drop('Pension and Retirement funds and Ins. Co.', axis=1)
-    train = train.drop('Investment funds', axis = 1)
-    train = train.drop('Foreign and international', axis=1)
-    train = train.drop('Other and Noncomps', axis=1)
-    train = train.drop('News Sentiment', axis=1)
-   # print(train)
-
-    model = ARIMA(train, order=(1, 1, 1)).fit()
-
-    print(model.summary())
-
-    test['date'] = pd.to_datetime(test['date'])
-    #test = test.set_index('date')
-
-    print(test)
-    test = test.drop('Maturity date', axis=1)
-    test = test.drop('Total issue', axis = 1)
-    test = test.drop('(SOMA) Federal Reserve banks', axis=1)
-    test = test.drop('Depository institutions', axis=1)
-    test = test.drop('Individuals', axis = 1)
-    test = test.drop('Dealers and brokers', axis=1)
-    test = test.drop('Pension and Retirement funds and Ins. Co.', axis=1)
-    test = test.drop('Investment funds', axis = 1)
-    test = test.drop('Foreign and international', axis=1)
-    test = test.drop('Other and Noncomps', axis=1)
-    test = test.drop('News Sentiment', axis=1)
-
-    test['Auction high rate %'] = test['Auction high rate %'].astype('float64')
-    
-    for col in test.columns:
-        print("column is")
-        print(col)
-    print(test.dtypes)
-    print(test)
-    test = test['date']
-   # print(test['date'])
-    # print(test)
-   # print(train)
-    # model.predict(test)
-
-    print(model(summary))
 
 def get_arima_model_cv(df):
-    data = utils.get_auction_type_df(df)
+    data = utils.resample_data(df).reset_index()
+    print(data)
+
     tscv = TimeSeriesSplit(n_splits=5)
 
     mse_scores = []
@@ -180,7 +119,7 @@ def get_arima_model_cv(df):
         
 
 
-def get_arima_model_char(df):
+def get_arima_model(df):
     # Prepare train and test data
     train, test = utils.split_train_test(df, 0.5, split_xy=False)
    # print(train.reset_index().drop(['index'], axis=1))
