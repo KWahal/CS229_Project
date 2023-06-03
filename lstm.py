@@ -14,9 +14,9 @@ import matplotlib.pyplot as plt
 from scalecast.Forecaster import Forecaster
 
 
-TEST_LENGTH = 120 # original: 120
-FUTURE_DATES = 1200 # original: 120
-EPOCHS = 15 # original: 15
+TEST_LENGTH = 130 # original: 120
+FUTURE_DATES = 130 # original: 120
+EPOCHS = 20 # original: 15
 LAYERS = 6 # original: 3
 
 def get_LSTM_model(df):
@@ -55,13 +55,18 @@ def get_LSTM_model(df):
     lstm_layer_sizes=(100,)*LAYERS,
     dropout=(0,)*LAYERS,
     )
-    ss = f.export_summary_stats('lstm')
-    print(ss)
-    print(ss.values)
+    
+   # print(f.summary)
+  #  ss = f.export_summary_stats('lstm')
+   # print(ss)
+   # print(ss.values)
+   # f.save_summary_stats()
+   # f.all_feature_info_to_excel(out_path='./', excel_name='lstm_feature_info.xlsx')
     f.plot_test_set()
     plt.savefig('images/lstm.png')
     f.plot_test_set()
     plt.show()
+    f.export(to_excel=True)
     
 
 get_LSTM_model('df_all')

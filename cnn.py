@@ -271,7 +271,7 @@ def cnn(df):
     model.add(MaxPooling1D(pool_size=2))
     model.add(Flatten())
     model.add(Dense(100, activation='relu'))
-    model.add(Dense(1))
+    model.add(Dense(1)) # add more dense layers, do more on the learning_rate
     model.compile(optimizer='adam', loss='mse')
     # fit model
     model.fit(X_train, y_train, epochs=200)
