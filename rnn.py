@@ -1,16 +1,21 @@
 import numpy as np
 import pandas as pd
-import tensorflow as tf
 import utils as utils
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense, LSTM
 
 def get_rnn(df):
-    X_train, y_train, X_test, y_test = utils.split_train_test(df, 0.7, split_xy=True)
-    print(X_train)
-    print(y_train)
-    print(X_test)
-    print(y_test)
+    df = utils.get_auction_type_df(df)
+    print(df)
+    df['date'] = pd.to_datetime(df['date'])
+    df = df.set_index('date')
+    df_resampled = df.resample('D').pad()
+    #df_resampled = df_resampled.fillna(method='ffill')
+    print(df_resampled)
+
+    #X_train, y_train, X_test, y_test = utils.split_train_test(df, 0.7, split_xy=True)
+    #print(X_train)
+    #print(y_train)
+    #print(X_test)
+    #print(y_test)
     #model = Sequential()
     #model.add(LSTM(units=64, input_shape=(timesteps, num_features)))
     #model.add(Dense(units=1))
@@ -24,4 +29,4 @@ def get_rnn(df):
 
     #future_predictions = model.predict(X_future)
 
-gen_rnn('four_week')
+get_rnn('four_week')

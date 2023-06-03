@@ -4,6 +4,13 @@ import clean_data_final as clean_data
 import matplotlib.pyplot as plt
 import math
 
+def resample_data(df);
+    df = utils.get_auction_type_df(df)
+    df['date'] = pd.to_datetime(df['date'])
+    df = df.set_index('date')
+    df_resampled = df.resample('D').pad()
+    return df_resampled
+
 def get_auction_type_df(df):
     df_all = clean_data.clean_main_data()
     bond_types = ['Security term_4 WK', 'Security term_8 WK', 'Security term_13 WK', 'Security term_17 WK', 'Security term_26 WK', 'Security term_52 WK', 'Security term_CMB']
