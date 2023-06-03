@@ -4,8 +4,8 @@ import clean_data_final as clean_data
 import matplotlib.pyplot as plt
 import math
 
-def resample_data(df);
-    df = utils.get_auction_type_df(df)
+def resample_data(df):
+    df = get_auction_type_df(df)
     df['date'] = pd.to_datetime(df['date'])
     df = df.set_index('date')
     df_resampled = df.resample('D').pad()

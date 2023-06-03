@@ -3,12 +3,7 @@ import pandas as pd
 import utils as utils
 
 def get_rnn(df):
-    df = utils.get_auction_type_df(df)
-    print(df)
-    df['date'] = pd.to_datetime(df['date'])
-    df = df.set_index('date')
-    df_resampled = df.resample('D').pad()
-    #df_resampled = df_resampled.fillna(method='ffill')
+    df_resampled = utils.resample_data(df)
     print(df_resampled)
 
     #X_train, y_train, X_test, y_test = utils.split_train_test(df, 0.7, split_xy=True)
