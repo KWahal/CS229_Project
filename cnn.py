@@ -182,6 +182,7 @@ def cnn(df):
     model.fit(Xtrain, Ytrain, epochs=200, verbose=0)"""
 
 def cnn(df):
+    df=utils.get_auction_type_df(df)
     X_train, y_train, X_test, y_test = utils.split_train_test(df, 0.8)
     print(X_train.shape)
     print(X_train)
@@ -271,6 +272,10 @@ def cnn(df):
     model.add(MaxPooling1D(pool_size=2))
     model.add(Flatten())
     model.add(Dense(100, activation='relu'))
+    model.add(Dense(64, activation='relu'))  # Additional dense layer
+    model.add(Dense(32, activation='relu'))
+   # model.add(Dense(16, activation='relu')) # better without this
+    #model.add(Dense(8, activation='relu')) # better without i think
     model.add(Dense(1)) # add more dense layers, do more on the learning_rate
     model.compile(optimizer='adam', loss='mse')
     # fit model
@@ -300,6 +305,7 @@ def cnn(df):
     pyplot.figure(figsize=(20,10))
     pyplot.plot(Ytest)
     pyplot.plot(preds, 'r')
+    pyplot.savefig('images/cnn.png')
     pyplot.show()
    # model.fit(X_train, y_train, epochs=10)
    # model.fit(X_train, y_train, epochs=10, batch_size=32, validation_data=(X_test, y_test))

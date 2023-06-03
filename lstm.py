@@ -14,12 +14,13 @@ import matplotlib.pyplot as plt
 from scalecast.Forecaster import Forecaster
 
 
-TEST_LENGTH = 130 # original: 120
-FUTURE_DATES = 130 # original: 120
+TEST_LENGTH = 200 # original: 120
+FUTURE_DATES = 200 # original: 120
 EPOCHS = 20 # original: 15
 LAYERS = 6 # original: 3
 
 def get_LSTM_model(df):
+    df = utils.get_auction_type_df(df)
     train, test = utils.split_train_test(df, 1, split_xy=False)
     f = Forecaster(
     y=train['Auction high rate %'],
@@ -28,14 +29,14 @@ def get_LSTM_model(df):
     future_dates = FUTURE_DATES,
     cis = False,
     )
-    # f.plot()
-    # plt.title('Orig Series',size=16)
-    # plt.show()
+    f.plot()
+    plt.title('Orig Series',size=16)
+    plt.show()
 
-    # figs, axs = plt.subplots(2, 1,figsize=(12,6))
-    # f.plot_acf(ax=axs[0],lags=36)
-    # f.plot_pacf(ax=axs[1],lags=36)
-    # plt.show()
+    figs, axs = plt.subplots(2, 1,figsize=(12,6))
+    f.plot_acf(ax=axs[0],lags=36)
+    f.plot_pacf(ax=axs[1],lags=36)
+    plt.show()
     stat, pval, _, _, _, _ = f.adf_test(full_res=True)
     print("stat is " + str(stat))
     print("pval is " + str(pval))
@@ -45,7 +46,7 @@ def get_LSTM_model(df):
     f.set_estimator('lstm')
     f.save_summary_stats()
     f.manual_forecast(
-    lags=36,
+    lags=5,
     batch_size=32,
     epochs=EPOCHS,
     validation_split=.2,
