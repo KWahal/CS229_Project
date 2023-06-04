@@ -1,4 +1,73 @@
-import numpy as np
+import numpy as np 
+import pandas as pd 
+import matplotlib.pyplot as plt 
+import seaborn as sns
+import utils
+from sklearn.preprocessing import StandardScaler
+from keras.models import Sequential
+from keras.layers import Dense, LSTM, Dropout
+
+def get_rnn(df):
+    df = utils.get_auction_type_df(df)
+    df_resampled = utils.resample_data(df)
+    train_data, test_data = utils.split_train_test(df_resampled, 0.7, split_xy=False)
+    train_data = train_data.drop(['date', 'Maturity date'], axis=1)
+    test_data = test_data.drop(['date', 'Maturity date'], axis=1)
+
+    sc = StandardScaler()
+    X_train_scaled = sc.fit_transform(train_data)
+
+    sc2 = StandardScaler()
+    y_train_scaled = sc2.fit_transform(train_data[['Auction high rate %']])
+
+    hops = 3
+    num_train_data = train_data.shape[0]
+    num_cols = train_data.shape[1]
+    X_train = []
+    y_train = []
+    for i in range(hops, num_train_data):
+        X_train.append(X_train_scaled[i-hops:i])
+        y_train.append(y_train_scaled[i][0])
+
+    X_train, y_train = np.array(X_train), np.array(y_train)
+
+    X_train_shape = np.reshape(X_train, (X_train.shape[0], X_train.shape[1], X_train.shape[2]))
+
+    model = Sequential()
+    model.add(LSTM(units=50, return_sequences=True, input_shape=(hops, num_cols)))
+    model.add(Dropout(0.2))
+    model.add(LSTM(units=50))
+    model.add(Dropout(0.2))
+    model.add(Dense(1))
+    model.compile(optimizer='adam', loss='mean_squared_error')
+
+    model.fit(X_train_shape, y_train, epochs=10, batch_size=32)
+
+    df_train_last = train_data.iloc[-hops:]
+    full_df = pd.concat((df_train_last, test_data), axis=0)
+    full_df = sc.transform(full_df)
+
+    X_train_shape_pred = []
+    num_test_data = full_df.shape[0]
+    for i in range(hops, num_test_data):
+        X_train_shape_pred.append(full_df[i-hops:i])
+    X_train_shape_pred = np.array(X_train_shape_pred)
+    print(X_train_shape_pred.shape)
+
+    y_test = model.predict(X_train_shape_pred)
+    y_final_pred = sc2.inverse_transform(y_test)
+
+    final_open_pred = pd.DataFrame(y_final_pred)
+    final_open_pred.columns = ['final_open_pred']
+
+    final = pd.concat((final_open_pred, test_data.reset_index(drop=True)), axis=1)
+
+    plt.plot(final['Auction high rate %'], label='actual', color='red')
+    plt.plot(final['final_open_pred'], label='predicted', color='blue')
+    plt.legend()
+    plt.show()
+
+""" import numpy as np
 import pandas as pd
 import utils as utils
 import torch
@@ -91,5 +160,6 @@ def get_rnn(df):
         test_input = torch.tensor(test_data.drop(['date', 'Maturity date', 'Auction high rate %'], axis=1).values.astype(float), dtype=torch.float32)
         predictions = model(test_input.to(device)).squeeze().cpu().numpy()
 
-    print(predictions)
-get_rnn('four_week')
+    print(predictions) """
+
+get_rnn('fifty_two_week')
