@@ -7,7 +7,7 @@ import math
 def resample_data(df):
     df['date'] = pd.to_datetime(df['date'])
     df = df.set_index('date')
-    df_resampled = df.resample('D').pad()
+    df_resampled = df.resample('D').fillna(method='ffill')
     df_resampled = df_resampled.reset_index()
     return df_resampled
 
@@ -43,7 +43,7 @@ def create_arrays(df):
 
 def split_train_test(df, split_size, split_xy=True):
     ts = df
-    
+
     # Split into a training set and a testing set
     train_size = int(len(ts) * split_size)
     train_ts, test_ts = ts[:train_size], ts[train_size:]
