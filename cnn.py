@@ -59,6 +59,8 @@ from keras.layers.convolutional import MaxPooling1D
 
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.metrics import mean_squared_error
+from sklearn.model_selection import KFold
+from sklearn.model_selection import TimeSeriesSplit
 import utils as utils
 import clean_data_final as clean
 from matplotlib import pyplot
@@ -183,7 +185,7 @@ def cnn(df):
 
 def cnn(df):
     df=utils.get_auction_type_df(df)
-    X_train, y_train, X_test, y_test = utils.split_train_test(df, 0.8)
+    X_train, y_train, X_test, y_test = utils.split_train_test(df, 0.92)
     print(X_train.shape)
     print(X_train)
    # print(X_train.dtypes)
@@ -211,39 +213,15 @@ def cnn(df):
     time_diff = (timestamps - timestamps[0])/pd.Timedelta(weeks=1)
     time_diff2 = (timestamps2 - timestamps2[0])/pd.Timedelta(weeks=1)
 
-    # Convert the time differences to numeric representation (e.g., seconds)
-   #time_diff_numeric = time_diff.dt.total_seconds()
-#    time_diff_numeric2 = time_diff2.dt.total_seconds()
-
     # Replace the first column in 'X' with the numeric representation
     X_train[:, 0] = time_diff
     X_test[:, 0] = time_diff2
 
-
-   # for array in [X_train, y_train, X_test, y_test]:
-       # array = array.astype('float32')
-       # array = array.tolist()
-       # array = np.asarray(array).astype(np.float32)
-        #all_columns = array[:, :]
-       # for col in all_columns:
-       #    array=array[col].values.astype(np.float32)
-       # y=train['target(price_in_lacs)'].values.astype(np.float32)
-        #print(array.dtype)
-      #  array = tf.convert_to_tensor(array, dtype=tf.float32)
-    # Define the input shape
     X_train = X_train.astype('float32')
     X_test = X_test.astype('float32')
     y_test = y_test.astype('float32')
     y_train = y_train.astype('float32')
     X_train = np.reshape(X_train, (X_train.shape[0], X_train.shape[1], 1))
-   # X_test = np.reshape(X_test, (X_test.shape[0], X_test.shape[1], 1))
-   # X_train = np.reshape(X_train, (1, X_train.shape[0], X_train.shape[1]))
-
-    # Reshape X_train
-  #  X_train = np.reshape(X_train, (X_train.shape[0], X_train.shape[1], X_train.shape[2]))
-
-# Reshape y_train
-  #  y_train = np.reshape(y_train, (y_train.shape[0], 1))
 
     print(X_train.shape)
     print(y_train.shape)
@@ -310,8 +288,157 @@ def cnn(df):
    # model.fit(X_train, y_train, epochs=10)
    # model.fit(X_train, y_train, epochs=10, batch_size=32, validation_data=(X_test, y_test))
 
+def cnn_crossval(df):
+    df=utils.get_auction_type_df(df)
+    X_train, y_train, X_test, y_test = utils.split_train_test(df, 0.92)
+
+    timestamps = pd.Series(X_train[:, 0])
+    timestamps2 = pd.Series(X_test[:, 0])
+
+    # Calculate the time differences by subtracting the first element from the entire series
+    time_diff = (timestamps - timestamps[0])/pd.Timedelta(weeks=1)
+    time_diff2 = (timestamps2 - timestamps2[0])/pd.Timedelta(weeks=1)
+
+    # Replace the first column in 'X' with the numeric representation
+    X_train[:, 0] = time_diff
+    X_test[:, 0] = time_diff2
+
+    X_train = X_train.astype('float32')
+    X_test = X_test.astype('float32')
+    y_test = y_test.astype('float32')
+    y_train = y_train.astype('float32')
+    X_train = np.reshape(X_train, (X_train.shape[0], X_train.shape[1], 1))
+    X_test = np.reshape(X_test, (X_test.shape[0], X_test.shape[1], 1))
+        # Merge inputs and targets
+    inputs = np.concatenate((X_train, X_test), axis=0)
+    targets = np.concatenate((y_train, y_test), axis=0)
+
+    # Define the K-fold Cross Validator
+    num_folds = 10
+    kfold = KFold(n_splits=num_folds, shuffle=True)
+
+    # K-fold Cross Validation model evaluation
+    fold_no = 1
+    for train, test in kfold.split(inputs, targets):
+
+        # Define the model architecture
+        model = Sequential()
+        model.add(Conv1D(filters=128, kernel_size=2, activation='relu', input_shape=(11, 1)))
+        model.add(Conv1D(filters=128, kernel_size=2, activation='relu'))
+        model.add(Conv1D(filters=128, kernel_size=2, activation='relu'))
+        model.add(MaxPooling1D(pool_size=2))
+        model.add(Flatten())
+        model.add(Dense(100, activation='relu'))
+        model.add(Dense(64, activation='relu'))  # Additional dense layer
+        model.add(Dense(32, activation='relu'))
+    # model.add(Dense(16, activation='relu')) # better without this
+        #model.add(Dense(8, activation='relu')) # better without i think
+        model.add(Dense(1)) # add more dense layers, do more on the learning_rate
+
+        # Compile the model
+        model.compile(optimizer='adam', loss='mse')
 
 
-cnn('df_all')
+        # Generate a print
+        print('------------------------------------------------------------------------')
+        print(f'Training for fold {fold_no} ...')
+
+        # Fit data to model
+        history = model.fit(inputs[train], targets[train], epochs=200)
+
+        # Generate generalization metrics
+       # scores = model.evaluate(inputs[test], targets[test], verbose=0)
+       # print(f'Score for fold {fold_no}: {model.metrics_names[0]} of {scores[0]}; {model.metrics_names[1]} of {scores[1]*100}%')
+      #  acc_per_fold.append(scores[1] * 100)
+       # loss_per_fold.append(scores[0])
+
+        # Increase fold number
+        fold_no = fold_no + 1
+
+def cnn_crossval_arima(df):
+    data = utils.get_auction_type_df(df)
+  #  data = utils.resample_data(data)
+    df = pd.DataFrame(data)
+
+# Extract the first column as a pandas Series
+    timestamps = df.iloc[:, 0]
+
+    # Calculate the time differences by subtracting the first element from the entire series
+    time_diff = np.array((timestamps - timestamps[0])/pd.Timedelta(weeks=1))
+
+    # Replace the first column in 'X' with the numeric representation
+    data['date'] = time_diff
+    data = data.drop('Maturity date', axis=1)
+
+   # data = np.hstack((time_diff.values.reshape(-1, 1), data[:, 1:]))
+    data = data.astype('float32')
+
+   # X_train = np.reshape(X_train, (X_train.shape[0], X_train.shape[1], 1))
+   # X_test = np.reshape(X_test, (X_test.shape[0], X_test.shape[1], 1))
+        # Merge inputs and targets
+   # inputs = np.concatenate((X_train, X_test), axis=0)
+   # targets = np.concatenate((y_train, y_test), axis=0)
+
+    tscv = TimeSeriesSplit(n_splits=10)
+
+    mse_scores = []
+
+    for train_index, test_index in tscv.split(data):
+        train_data = data.iloc[train_index]
+        test_data = data.iloc[test_index]
+
+        # Fit model
+        model = Sequential()
+        model.add(Conv1D(filters=128, kernel_size=2, activation='relu', input_shape=(18, 1)))
+        model.add(Conv1D(filters=128, kernel_size=2, activation='relu'))
+        model.add(Conv1D(filters=128, kernel_size=2, activation='relu'))
+        model.add(MaxPooling1D(pool_size=2))
+        model.add(Flatten())
+        model.add(Dense(100, activation='relu'))
+        model.add(Dense(64, activation='relu'))  # Additional dense layer
+        model.add(Dense(32, activation='relu'))
+    # model.add(Dense(16, activation='relu')) # better without this
+        #model.add(Dense(8, activation='relu')) # better without i think
+        model.add(Dense(1)) # add more dense layers, do more on the learning_rate
+
+        # Compile the model
+        model.compile(optimizer='adam', loss='mse')
+
+        targets = pd.DataFrame(train_data['Auction high rate %']).to_numpy()
+        inputs = pd.DataFrame(train_data.drop('Auction high rate %', axis=1)).to_numpy()
+
+       # inputs = train_data[]
+       # inputs = pd.DataFrame(train_data.iloc[:, -1]).to_numpy()
+      #  targets = pd.DataFrame(train_data.iloc[:, :-1]).to_numpy()
+      #  print(inputs)
+       # print(targets)
+        history = model.fit(inputs, targets, epochs=200)
+
+        # Make predictions on test data
+        #test_inputs = test_data.iloc[:, -1]
+        #y_test = test_data.iloc[:, :-1]
+        y_test = pd.DataFrame(test_data['Auction high rate %']).to_numpy()
+        test_inputs = pd.DataFrame(test_data.drop('Auction high rate %', axis=1)).to_numpy()
+        preds = model.predict(test_inputs)
+
+        # Calculate mean squared error
+        Ytest=y_test.reshape(-1,1) 
+
+        mse = mean_squared_error(y_test,preds)
+        print("mse is " + str(mse))
+        mse_scores.append(mse)
+
+        # plot
+        pyplot.figure(figsize=(20,10))
+        pyplot.plot(Ytest)
+        pyplot.plot(preds, 'r')
+        pyplot.savefig('images/cnn.png')
+        pyplot.show()
+    mean_mse = np.mean(mse_scores)
+    print("mean mse is " + str(mean_mse))
+
+#cnn('df_all')
+#cnn_crossval('df_all')
+cnn_crossval_arima('df_all')
 print("hello")
 
