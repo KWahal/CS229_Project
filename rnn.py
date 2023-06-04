@@ -9,8 +9,7 @@ from keras.layers import Dense, LSTM, Dropout
 
 def get_rnn(df):
     df = utils.get_auction_type_df(df)
-    df_resampled = utils.resample_data(df)
-    train_data, test_data = utils.split_train_test(df_resampled, 0.7, split_xy=False)
+    train_data, test_data = utils.split_train_test(df, 0.7, split_xy=False)
     train_data = train_data.drop(['date', 'Maturity date'], axis=1)
     test_data = test_data.drop(['date', 'Maturity date'], axis=1)
 
@@ -162,4 +161,4 @@ def get_rnn(df):
 
     print(predictions) """
 
-get_rnn('fifty_two_week')
+get_rnn('four_week')

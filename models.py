@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+import seaborn as sns
 from sklearn.linear_model import LinearRegression
 from statsmodels.tsa.arima.model import ARIMA
 import utils as utils
@@ -122,7 +123,7 @@ def get_arima_model(df):
     # Prepare train and test data
     df = utils.get_auction_type_df(df)
     df_resampled = utils.resample_data(df)
-    train, test = utils.split_train_test(df_resampled, 0.99, split_xy=False)
+    train, test = utils.split_train_test(df_resampled, 0.7, split_xy=False)
 
     # Fit ARIMA model on training data
     exog_train = train.drop(['Auction high rate %', 'Maturity date'], axis=1)

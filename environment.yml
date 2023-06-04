@@ -18,6 +18,7 @@ dependencies:
     - sentencepiece
     - sacrebleu
     - tensorboard
+    - prophet
     - spacy
     - pytextrank
     - argparse
