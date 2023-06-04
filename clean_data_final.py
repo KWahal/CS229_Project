@@ -53,6 +53,8 @@ def clean_main_data():
     # sort them in time order
     df_all = df_all.sort_values(by='date')
 
+    print(df_all)
+
     return df_all
 
 print(clean_main_data().columns)
