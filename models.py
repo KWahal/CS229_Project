@@ -36,7 +36,7 @@ def get_linear_regression_model(df):
     r_sq = model.score(x_test, y_test)
     
     MSE = mean_squared_error(y_test, y_pred)
-    
+
     print(f"MSE: {MSE}")
     print(f"coefficient of determination: {r_sq}")
     print(f"intercept: {model.intercept_}")
@@ -122,7 +122,7 @@ def get_arima_model(df):
     # Prepare train and test data
     df = utils.get_auction_type_df(df)
     df_resampled = utils.resample_data(df)
-    train, test = utils.split_train_test(df_resampled, 0.8, split_xy=False)
+    train, test = utils.split_train_test(df_resampled, 0.99, split_xy=False)
 
     # Fit ARIMA model on training data
     exog_train = train.drop(['Auction high rate %', 'Maturity date'], axis=1)

@@ -30,7 +30,7 @@ class RNN(nn.Module):
 
     def forward(self, x):
         output, _ = self.rnn(x)
-        output = self.fc(output[:, -1, :])
+        output = self.fc(output[:, -1])
         return output
 
 def get_rnn(df):
@@ -40,12 +40,17 @@ def get_rnn(df):
     # Preprocess the data
     df = utils.get_auction_type_df(df)
     df_resampled = utils.resample_data(df)
-    df = df_resampled.drop(['date', 'Auction high rate %', 'Maturity date'], axis=1)
+    train_data, test_data = utils.split_train_test(df_resampled, 0.8, split_xy=False)
 
-    input_data = df.values[:, 1:].astype(float)
-    target_data = df_resampled['Auction high rate %'].values.astype(float)
+    input_data = train_data.drop(['date', 'Maturity date', 'Auction high rate %'], axis=1).values.astype(float)
+    target_data = train_data['Auction high rate %'].values.astype(float)
 
     # Create the dataset and data loader
+    trim = input_data.shape[0] % 32
+    input_data = input_data[trim:]
+    target_data = target_data[trim:]
+    test_data = test_data[:32]
+
     dataset = CustomDataset(input_data, target_data)
     data_loader = DataLoader(dataset, batch_size=32, shuffle=True)
 
@@ -53,14 +58,15 @@ def get_rnn(df):
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
     # Define the input size, hidden size, and output size of the RNN
-    input_size = len(df.columns) - 1  # Number of input features
-    hidden_size = 64
-    output_size = 1  # Number of output classes (1 for regression)
+    input_size = input_data.shape[1]  # Number of input features
+    hidden_size = 32
+
+    output_size = input_data.shape[0]  # Number of output classes (1 for regression)
     model = RNN(input_size, hidden_size, output_size).to(device)
 
     # Set up the loss function, optimizer, and other hyperparameters
     loss_fn = nn.MSELoss()
-    optimizer = optim.Adam(model.parameters(), lr=0.001)
+    optimizer = optim.Adam(model.parameters(), lr=0.000001)
     num_epochs = 10
 
     # Training loop
@@ -71,7 +77,7 @@ def get_rnn(df):
             batch_target = batch_target.to(device)
 
             optimizer.zero_grad()
-            output = model(batch_input)
+            output = model(batch_input.unsqueeze(1))
             loss = loss_fn(output, batch_target.unsqueeze(1))
             loss.backward()
             optimizer.step()
@@ -80,8 +86,10 @@ def get_rnn(df):
 
     # Use the trained model for predictions
     model.eval()
+    print(model.parameters())
     with torch.no_grad():
-        test_input = torch.tensor(test_df[['feature1', 'feature2', 'feature3']].values, dtype=torch.float32)
+        test_input = torch.tensor(test_data.drop(['date', 'Maturity date', 'Auction high rate %'], axis=1).values.astype(float), dtype=torch.float32)
         predictions = model(test_input.to(device)).squeeze().cpu().numpy()
 
+    print(predictions)
 get_rnn('four_week')
