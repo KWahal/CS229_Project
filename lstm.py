@@ -26,6 +26,7 @@ BATCH_SIZE = 32 # original: 32
 def get_LSTM_model_cv(df):
     df = utils.get_auction_type_df(df)
     # df = utils.resample_data(df)
+    print(df)
 
     n_splits = 10  # Number of cross-validation folds
     tscv = TimeSeriesSplit(n_splits=n_splits)
@@ -83,7 +84,7 @@ def get_LSTM_model_cv(df):
     # print(ss.values)
     # f.save_summary_stats()
     # f.all_feature_info_to_excel(out_path='./', excel_name='lstm_feature_info.xlsx')
-        f.plot_test_set()
+        f.plot_test_set(include_train=False)
         plt.savefig('images/lstm_cv/lstm' + str(i) + '.png')
         # plt.close()
         # f.plot_test_set()
@@ -97,7 +98,7 @@ def get_LSTM_model_cv(df):
 
 def get_LSTM_model(df):
     df = utils.get_auction_type_df(df)
-    # df = utils.resample_data(df)
+    df = utils.resample_data(df)
     train, test = utils.split_train_test(df, 1, split_xy=False)
     f = Forecaster(
     y=train['Auction high rate %'],
@@ -140,12 +141,12 @@ def get_LSTM_model(df):
    # print(ss.values)
    # f.save_summary_stats()
    # f.all_feature_info_to_excel(out_path='./', excel_name='lstm_feature_info.xlsx')
-    f.plot_test_set()
+    f.plot_test_set(include_train=False)
     plt.savefig('images/lstm.png')
     plt.close()
-    f.plot_test_set()
+    f.plot_test_set(include_train=False)
     plt.show()
     f.export(to_excel=True)
     
 
-get_LSTM_model_cv('df_all')
+get_LSTM_model('four_week')
