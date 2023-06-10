@@ -10,6 +10,7 @@ from keras.layers import Dense, LSTM, Dropout
 def get_rnn(df):
     df = utils.get_auction_type_df(df)
     train_data, test_data = utils.split_train_test(df, 0.7, split_xy=False)
+    test_dates = test_data['date'].tolist()
     train_data = train_data.drop(['date', 'Maturity date'], axis=1)
     test_data = test_data.drop(['date', 'Maturity date'], axis=1)
 
@@ -60,11 +61,14 @@ def get_rnn(df):
     final_open_pred.columns = ['final_open_pred']
 
     final = pd.concat((final_open_pred, test_data.reset_index(drop=True)), axis=1)
+    final.insert(0, 'Date', test_dates, True)
+    print(final)
 
-    plt.plot(final['Auction high rate %'], label='actual', color='red')
-    plt.plot(final['final_open_pred'], label='predicted', color='blue')
+    plt.plot(final['Date'], final['Auction high rate %'], label='actual', color='red')
+    plt.plot(final['Date'], final['final_open_pred'], label='predicted', color='blue')
     plt.legend()
-    plt.show()
+    # plt.show()
+    plt.savefig('images/rnn.png')
 
 """ import numpy as np
 import pandas as pd
@@ -161,4 +165,4 @@ def get_rnn(df):
 
     print(predictions) """
 
-get_rnn('four_week')
+get_rnn('thirteen_week')

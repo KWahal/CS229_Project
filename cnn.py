@@ -280,9 +280,18 @@ def cnn(df):
     mse = mean_squared_error(y_test,preds)
     print("mse is " + str(mse))
 
+    Ytest_df = pd.DataFrame(Ytest, columns = ['Value'])
+    Ytest_df.insert(0, 'Date', timestamps2.tolist(), True)
+    Ytest_df = Ytest_df.groupby('Date')['Value'].mean().reset_index()
+
+    preds_df = pd.DataFrame(preds, columns = ['Value'])
+    preds_df.insert(0, 'Date', timestamps2.tolist(), True)
+    preds_df = preds_df.groupby('Date')['Value'].mean().reset_index()
+
+    # plot
     pyplot.figure(figsize=(20,10))
-    pyplot.plot(Ytest)
-    pyplot.plot(preds, 'r')
+    pyplot.plot(Ytest_df['Date'], Ytest_df['Value'])
+    pyplot.plot(preds_df['Date'], preds_df['Value'], 'r')
     pyplot.savefig('images/cnn.png')
     pyplot.show()
    # model.fit(X_train, y_train, epochs=10)
@@ -383,6 +392,8 @@ def cnn_crossval_arima(df):
 
     mse_scores = []
 
+    i = 0
+
     for train_index, test_index in tscv.split(data):
         train_data = data.iloc[train_index]
         test_data = data.iloc[test_index]
@@ -428,17 +439,27 @@ def cnn_crossval_arima(df):
         print("mse is " + str(mse))
         mse_scores.append(mse)
 
+        Ytest_df = pd.DataFrame(Ytest, columns = ['Value'])
+        Ytest_df.insert(0, 'Date', timestamps.iloc[test_index].tolist(), True)
+        Ytest_df = Ytest_df.groupby('Date')['Value'].mean().reset_index()
+
+        preds_df = pd.DataFrame(preds, columns = ['Value'])
+        preds_df.insert(0, 'Date', timestamps.iloc[test_index].tolist(), True)
+        preds_df = preds_df.groupby('Date')['Value'].mean().reset_index()
+
         # plot
         pyplot.figure(figsize=(20,10))
-        pyplot.plot(Ytest)
-        pyplot.plot(preds, 'r')
-        pyplot.savefig('images/cnn.png')
+        pyplot.plot(Ytest_df['Date'], Ytest_df['Value'])
+        pyplot.plot(preds_df['Date'], preds_df['Value'], 'r')
+        pyplot.xlabel("Dates")
+        pyplot.ylabel("Values")
+        pyplot.savefig('images/cnn_cv/cnn' + str(i) + '.png')
         pyplot.show()
+        i += 1
     mean_mse = np.mean(mse_scores)
     print("mean mse is " + str(mean_mse))
 
-#cnn('df_all')
+cnn('df_all')
 #cnn_crossval('df_all')
-cnn_crossval_arima('df_all')
-print("hello")
+# cnn_crossval_arima('df_all')
 
