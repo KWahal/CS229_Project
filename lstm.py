@@ -17,7 +17,7 @@ from scalecast.Forecaster import Forecaster
 
 TEST_LENGTH = 0.3 # original: 120
 FUTURE_DATES = 120 # original: 120
-EPOCHS = 50 # original: 15
+EPOCHS = 30 # original: 15
 LAYERS = 8 # original: 3
 LEARNING_RATE = 0.001 # original: 0.001
 LAGS = 10 # original: 5
@@ -194,9 +194,17 @@ def get_LSTM_model(df):
    # f.save_summary_stats()
    # f.all_feature_info_to_excel(out_path='./', excel_name='lstm_feature_info.xlsx')
     f.plot_test_set(include_train=False)
+    plt.legend(['True Values', '', 'Predicted Values'])
+    plt.title("Forecaster-based LSTM Model, 4-week Bills: True Values vs Predicted Values")
+    plt.xlabel("Time")
+    plt.ylabel("Auction High % Rate")
     plt.savefig('images/lstm.png')
     plt.close()
     f.plot_test_set(include_train=False)
+    plt.legend(labels=['True Values', '', 'Predicted Values'])
+    plt.title("Forecaster-based LSTM Model, 4-week Bills: True Values vs Predicted Values")
+    plt.xlabel("Time")
+    plt.ylabel("Auction High % Rate")
     plt.show()
     f.export(to_excel=True)
     
