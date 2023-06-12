@@ -35,6 +35,11 @@ def get_polynomial_regression_model(df):
     polyreg_scaled.fit(x_train, y_train)
 
     y_pred = polyreg_scaled.predict(x_test)
+
+    y_pred_train = polyreg_scaled.predict(x_train)
+
+    MSE_train = mean_squared_error(y_train, y_pred_train)
+    print(MSE_train)
     # y_pred = polyreg_scaled.predict(x_train)
 
     # r_sq = polyreg_scaled.score(x_test, y_test)
@@ -58,5 +63,5 @@ def get_polynomial_regression_model(df):
     plt.legend()
     plt.show()
 
-get_polynomial_regression_model('eight_week')
+get_polynomial_regression_model('four_week')
 

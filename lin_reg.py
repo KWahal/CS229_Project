@@ -36,9 +36,13 @@ def get_linear_regression_model(df):
 
     y_pred = model.predict(x_test)
     r_sq = model.score(x_test, y_test)
+
+    y_pred_train = model.predict(x_train)
+    MSE_train = mean_squared_error(y_train, y_pred_train)
     
     MSE = mean_squared_error(y_test, y_pred)
 
+    print(f"MSE train: {MSE_train}")
     print(f"MSE: {MSE}")
     print(f"coefficient of determination: {r_sq}")
     print(f"intercept: {model.intercept_}")
@@ -52,4 +56,4 @@ def get_linear_regression_model(df):
     plt.legend()
     plt.show()
 
-get_linear_regression_model('eight_week')
+get_linear_regression_model('four_week')

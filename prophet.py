@@ -121,4 +121,5 @@ def get_split(df, split_size, split_xy=True):
 #prophet('fifty_two_week')
 # prophet('cmb')
 
-multivar_prophet('four_week')
+#multivar_prophet('four_week')
+prophet('four_week')

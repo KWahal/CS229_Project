@@ -89,10 +89,17 @@ def get_arima_model_cv(df):
 
         predictions = predictions.reset_index().drop(['index'], axis=1).iloc[:, 0]
         y_test = test_data['Auction high rate %'].astype('float64').squeeze().reset_index().drop(['index'], axis=1)['Auction high rate %']
+        y_train = train_data['Auction high rate %'].astype('float64').squeeze().reset_index().drop(['index'], axis=1)['Auction high rate %']
+
 
         # Calculate mean squared error
         mse = mean_squared_error(y_test, predictions)
         mse_scores.append(mse)
+
+        y_train_pred = model.predict(n_periods =len(train_data), exogenous=exog_train)
+        mse_train = mean_squared_error(y_train, y_train_pred)
+        print(mse_train)
+
 
         # Create a figure and axis
         fig, ax = plt.subplots()
@@ -123,7 +130,7 @@ def get_arima_model(df):
     # Prepare train and test data
     df = utils.get_auction_type_df(df)
     df_resampled = utils.resample_data(df)
-    train, test = utils.split_train_test(df_resampled, 0.7, split_xy=False)
+    train, test = utils.split_train_test(df_resampled, 0.8, split_xy=False)
 
     # Fit ARIMA model on training data
     exog_train = train.drop(['Auction high rate %', 'Maturity date'], axis=1)
@@ -137,10 +144,15 @@ def get_arima_model(df):
     
     predictions = predictions.reset_index().drop(['index'], axis=1).iloc[:, 0]
     y_test = test['Auction high rate %'].astype('float64').squeeze().reset_index().drop(['index'], axis=1)['Auction high rate %']
+    y_train = train['Auction high rate %'].astype('float64').squeeze().reset_index().drop(['index'], axis=1)['Auction high rate %']
 
     # Evaluate model performance
     mse = ((predictions - y_test) ** 2).mean()
     rmse = mse ** 0.5
+
+    y_train_pred = model.predict(n_periods =len(train), exogenous=exog_train)
+    mse_train = mean_squared_error(y_train, y_train_pred)
+    print(mse_train)
 
     # Create a figure and axis
     fig, ax = plt.subplots()
@@ -164,4 +176,5 @@ def get_arima_model(df):
     # Show the plot
     plt.show()
 
-get_arima_model('four_week')
+#get_arima_model('four_week')
+get_arima_model_cv('four_week')
