@@ -1,6 +1,6 @@
 # CS229_Project
 Final project for [CS 229: Machine Learning](https://cs229.stanford.edu/)
-Time-series Forecasting for Treasury Auctions.
+Time-series Forecasting for Treasury Auctions. Karsen Wahal, Charlie Li, Soham Konar.
 
 #### Abstract
 The United States Treasury holds a variant of Dutch auctions to sell treasury bills (Tbills), special short-term bills issued when the government needs money for a short period of time. However, treasury bill auction high rates are notoriously difficult to predict given the complexity of financial markets. In this paper, we apply machine learning methods (linear regression, polynomial regression, ARIMA,
