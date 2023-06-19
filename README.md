@@ -1,5 +1,6 @@
 # CS229_Project
-Final project for [CS 229: Machine Learning](https://cs229.stanford.edu/)
+Final project for [CS 229: Machine Learning](https://cs229.stanford.edu/), Spring 2023.
+
 Time-series Forecasting for Treasury Auctions. Karsen Wahal, Charlie Li, Soham Konar.
 
 #### Abstract
